@@ -1,2 +1,2 @@
-# boot_twitter
-Boot para envio de Hashtag´s especifica do Twitter
+# search_twitter
+Script para consulta de Hashtag´s especifica do Twitter.
