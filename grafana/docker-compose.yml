@@ -12,7 +12,7 @@ networks:
 services:
 
   grafana:
-#    image: grafana
+#    image: stefanwalther/grafana
     build:
       context: ./
       dockerfile: Dockerfile

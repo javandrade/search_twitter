@@ -1,15 +1,14 @@
+FROM grafana/grafana:4.6.4
 
-FROM grafana/grafana:6.5.0
-MAINTAINER Java Andrade <java.andrade@gmail.com>
-
-#RUN apt install update && \
- #   apt install -y curl gettext-base && \
-  #  rm -rf /var/lib/apt/lists/*
+RUN apt-get update && \
+    apt-get install -y curl gettext-base && \
+    rm -rf /var/lib/apt/lists/*
 
 COPY entrypoint.sh .
-#RUN chmod +x entrypoint.sh
+RUN chmod +x entrypoint.sh
 
-####Removendo .init #########################
+# Todo: Just for debugging purposes, can be removed
+# Make sure that the init flag is not there
 RUN rm -rf /var/lib/grafana/.init
 
 ENTRYPOINT ["./entrypoint.sh"]

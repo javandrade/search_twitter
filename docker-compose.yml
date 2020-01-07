@@ -1,16 +1,56 @@
-web:
-  build: .
-  ports:
-    - "5000:5000"
-  volumes:
-    - .:/code
-  links:
-    - redis
-  environment:
-    - PORT_REDIS=6379
-    - HOST_REDIS=redis
+version: '3'
+services:
+  es01:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.0.1
+    container_name: es
+    environment:
+      - node.name=es
+      - cluster.name=es-docker-cluster
+      - cluster.initial_master_nodes=es
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - data01:/usr/share/elasticsearch/data
+    ports:
+      - 9200:9200
+    networks:
+      - elastic
+  grafana:
+#    image: grafana
+    build:
+      context: ./
+      dockerfile: Dockerfile
+#    container_name: grafana
+    ports:
+      - 3000:3000
+    volumes:
+      - ./entrypoint.sh:/app/entrypoint.sh
+      - ./config/grafana.ini:/etc/grafana/grafana.ini
+      - ./config/dashboards:/var/lib/grafana/dashboards
+      - ./config/datasources:/etc/grafana/datasources
+      - ./config/plugins:/var/lib/grafana/plugins
+      - grafana_data:/var/lib/grafana
+    env_file:
+      - ./config.env
+    networks:
+      - back-tier
+      - front-tier
 
-redis:
-  image: redis
-  volumes:
-    - dados_redis:/data
+volumes:
+  data01:
+    driver: local
+  
+  grafana_data: {} 
+
+networks:
+  elastic:
+    driver: bridge
+
+  front-tier:
+    driver: bridge
+  back-tier:
+    driver: bridge       
